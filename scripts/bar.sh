@@ -6,7 +6,7 @@
 interval=0
 
 # load colors
-. ~/.config/chadwm/scripts/bar_themes/tundra
+. ~/.config/chadwm/scripts/bar_themes/catppuccin
 
 cpu() {
   cpu_val=$(grep -o "^[^ ]*" /proc/loadavg)
@@ -16,8 +16,8 @@ cpu() {
 }
 
 pkg_updates() {
-  #updates=$({ timeout 20 doas xbps-install -un 2>/dev/null || true; } | wc -l) # void
-  updates=$({ timeout 20 checkupdates 2>/dev/null || true; } | wc -l) # arch
+  updates=$({ timeout 20 doas xbps-install -un 2>/dev/null || true; } | wc -l) # void
+  # updates=$({ timeout 20 checkupdates 2>/dev/null || true; } | wc -l) # arch
   # updates=$({ timeout 20 aptitude search '~U' 2>/dev/null || true; } | wc -l)  # apt (ubuntu, debian etc)
 
   if [ -z "$updates" ]; then
@@ -51,9 +51,14 @@ wlan() {
 	esac
 }
 
+calendar() {
+	printf "^c$black^ ^b$pink^  "
+	printf "^c$white^^b$grey^ $(date '+%Y/%m/%d') ^b$black^"
+}
+
 clock() {
 	printf "^c$black^ ^b$darkblue^ 󱑆 "
-	printf "^c$black^^b$blue^ $(date '+%H:%M')  "
+	printf "^c$black^^b$blue^ $(date '+ %H:%M')  "
 }
 
 while true; do
@@ -61,5 +66,5 @@ while true; do
   [ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates)
   interval=$((interval + 1))
 
-  sleep 1 && xsetroot -name "$updates $(cpu) $(battery) $(mem) $(wlan) $(clock)"
+  sleep 1 && xsetroot -name "$updates $(cpu) $(battery) $(mem) $(wlan) $(calendar) $(clock)"
 done
